@@ -25,6 +25,8 @@ not-containing = $(filter %,$(foreach v,$2,$(if $(findstring $1,$v),,$v)))
 ################
 # Environment variables
 
+python := python3.6
+
 ################
 # Sanity checks and local variables
 
@@ -32,6 +34,7 @@ not-containing = $(filter %,$(foreach v,$2,$(if $(findstring $1,$v),,$v)))
 # Exported variables
 
 export DATE := $(date)
+export VIRTUAL_ENV_DISABLE_PROMPT := yes
 
 ################
 # Includes
@@ -43,10 +46,14 @@ export DATE := $(date)
 all:
 
 .PHONY: run
-run:
+run: .depend.secondary | mnt data
+	source venv/bin/activate && $(python) main.py mnt data
 
 .PHONY: test
 test:
+
+.PHONY: depend
+depend: .depend.secondary
 
 .PHONY: check
 check:
@@ -60,5 +67,19 @@ clean:
 ################
 # Application specific targets
 
+.venv.secondary:
+	$(python) -m virtualenv venv
+	touch $@
+
+.depend.secondary: requirements.txt .venv.secondary
+	source venv/bin/activate && $(python) -m pip install -r requirements.txt
+	touch $@
+
 ################
 # Source transformations
+
+mnt:
+	mkdir -p $@
+
+data:
+	mkdir -p $@
