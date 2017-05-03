@@ -2,6 +2,3 @@
 *~
 *.d
 .*.secondary
-/mnt
-/venv
-/data
