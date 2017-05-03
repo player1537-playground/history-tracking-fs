@@ -91,7 +91,8 @@ export DATE := $(date)
 all: $(addprefix build/,$(executables))
 
 .PHONY: run
-run: $(addprefix build/,$(executables))
+run: $(addprefix build/,$(executables)) | mnt data
+	build/foo -f mnt
 
 .PHONY: test
 test: $(patsubst tests/%,%,$(tests:.c=))
@@ -149,6 +150,12 @@ endif
 
 ################
 # Source transformations
+
+mnt:
+	mkdir -p $@
+
+data:
+	mkdir -p $@
 
 build:
 	mkdir -p $@
